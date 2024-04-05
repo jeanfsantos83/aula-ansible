@@ -1,0 +1,45 @@
+---
+- name: Ping em todas as máquinas
+  hosts: all
+  remote_user: root
+  tasks:
+  - name: Exucação do ping
+    ping:
+
+- name: Instalação e execução do nginx
+  hosts: nginx
+  remote_user: root
+  tasks:
+    - name: Atualizar o apt e instalar o nginx
+      apt:
+        update_cache: yes
+        name: nginx
+        state: present
+    - name: Garantindo a execução do nginx
+      service:
+        name: nginx
+        state: started
+
+- name: Instalação o docker
+  hosts: docker
+  remote_user: root
+  tasks:
+  - name: Instalando os pacotes de pré requisito
+    apt:
+      name: ca-certificates,curl,gnupg,lsb-release
+      update_cache: yes
+      state: present
+  - name: Adicionando Docker GPG KEY
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  - name: Adicionando o repositório
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+
+  - name: Instalando o Docker
+    apt:
+      update_cache: yes
+      name: docker-ce
+      state: present
